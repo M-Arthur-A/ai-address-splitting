@@ -1,0 +1,48 @@
+* ABOUT
+Splitting russian address with AI from https://huggingface.co/aidarmusin/address-ner-ru
+* INSTALL
+#+begin_src bash
+git clone git@github.com:M-Arthur-A/ai-address-splitting.git
+cd ai-address-splitting
+uv sync
+#+end_src
+* CONFIG
+create ~./.env~ file
+#+begin_src config
+MODEL_PATH  = "path/to/model"
+DB_PATH     = ""
+MS_SQL_HOST = ""
+MS_SQL_USER = ""
+MS_SQL_PASS = ""
+MS_SQL_TABL = ""
+MS_SQL_COL  = ""
+#+end_src
+* RUN
+#+begin_src txt
+usage: main.py [-h] [-i] [-c CONFIG_PATH] [-a ADDRESS] [-db DATABASE]
+
+AI address splitter
+
+options:
+  -h, --help            show this help message and exit
+  -i, --init            download model
+  -c, --config-path CONFIG_PATH
+                        path of .env file
+  -a, --address ADDRESS
+                        address to parse
+  -db, --database DATABASE
+                        csv filepath or "sql"
+#+end_src
+
+
+examples:
+#+begin_src bash
+# split 1 address
+uv run python main.py -a "address"
+
+# split multiple addresses in .csv file
+uv run python main.py -db "path/to/csv"
+
+# split addresses from MS SQL DB from config
+uv run python main.py -db "sql"
+#+end_src
