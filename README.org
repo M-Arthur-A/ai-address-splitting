@@ -2,20 +2,32 @@
 Splitting russian address with AI from https://huggingface.co/aidarmusin/address-ner-ru
 * INSTALL
 #+begin_src bash
-git clone git@github.com:M-Arthur-A/ai-address-splitting.git
+git clone https://github.com/M-Arthur-A/ai-address-splitting.git
 cd ai-address-splitting
 uv sync
 #+end_src
 * CONFIG
-create ~./.env~ file
+create a directory to download the model to and
+add =MODEL_PATH= to ~./env.~ file in working prj directory:
+#+begin_src bash
+mkdir model
+touch .env
+#+end_src
+
+~.env~ example:
 #+begin_src config
-MODEL_PATH  = "path/to/model"
+MODEL_PATH  = "path/to/model-dir/"
 DB_PATH     = ""
 MS_SQL_HOST = ""
 MS_SQL_USER = ""
 MS_SQL_PASS = ""
 MS_SQL_TABL = ""
 MS_SQL_COL  = ""
+#+end_src
+
+then download model to make it local:
+#+begin_src bash
+uv run python main.py --init
 #+end_src
 * RUN
 #+begin_src txt
