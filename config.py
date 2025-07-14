@@ -5,6 +5,8 @@ import argparse
 class Config:
     MODEL_PATH:  str = './model/'
     DB_PATH:     str = ''
+    OUT_PATH:    str = ''
+    CSV_BUFFER_SIZE: int = 1000000
     MS_SQL_HOST: str = ''
     MS_SQL_USER: str = ''
     MS_SQL_PASS: str = ''

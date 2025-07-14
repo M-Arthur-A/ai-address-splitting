@@ -17,7 +17,9 @@ touch .env
 ~.env~ example:
 #+begin_src config
 MODEL_PATH  = "path/to/model-dir/"
-DB_PATH     = ""
+DB_PATH     = "path/to/in.csv"
+OUT_PATH    = "path/to/out.csv"
+CSV_BUFFER_SIZE = 1000000
 MS_SQL_HOST = ""
 MS_SQL_USER = ""
 MS_SQL_PASS = ""

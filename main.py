@@ -41,14 +41,18 @@ def ai_run(address):
 
 
 def main(address: str | None = None,
-         filename: str = ''
+         config: Config = Config(logger)
     ):
     if address:
         logger.info(ai_run(address))
-    elif filename == 'sql':
+    elif config.DB_PATH == 'sql':
         logger.error('SQL connector WIP')
-    elif filename:
-        logger.error('.csv / .parquet connector WIP')
+    elif config.DB_PATH:
+        try:
+            with open(config.DB_PATH) as f:
+                ...
+        except FileExistsError:
+            logger.error(f'Cannot open {config.DB_PATH}')
     else:
         logger.error('no address / filename / SQLconnection provided')
 
@@ -62,7 +66,7 @@ if __name__ == "__main__":
 
     if config.APP_ARGS.address:
         # main("628672,,,, Автономный Округ Ханты-Мансийский Автономный Округ - Югра,, Г. Лангепас, Ул. Солнечная, Д.21")
-        main(address=config.APP_ARGS.address)
+        main(address=config.APP_ARGS.address,
+             config=config)
     elif config.DB_PATH:
-        main(filename=config.DB_PATH)
-    main()
+        main(config=config)
