@@ -43,6 +43,12 @@ class Config:
             type=lambda s: str(s),
             help='csv filepath or "sql"'
         )
+        parser.add_argument(
+            '-b',
+            '--csv-buffer-size',
+            type=int,
+            help='buffer size for a csv file'
+        )
         self.APP_ARGS = parser.parse_args()
         self.__logger.debug("| CONFIG | app args has been parsed")
 
@@ -87,5 +93,7 @@ class Config:
                 self.DB_PATH = self.APP_ARGS.database.lower()
             else:
                 self.DB_PATH = self.APP_ARGS.database
+        if self.APP_ARGS.csv_buffer_size:
+            self.CSV_BUFFER_SIZE = int(self.APP_ARGS.csv_buffer_size)
 
         self.__logger.debug("| CONFIG | config has been created")
