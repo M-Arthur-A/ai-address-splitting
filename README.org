@@ -56,12 +56,16 @@ options:
 
 examples:
 #+begin_src bash
+# using config file
+uv run python main.py
+
 # split 1 address
 uv run python main.py -a "address"
 
 # split multiple addresses in .csv file
 uv run python main.py -db "path/to/csv"
 
+# (WIP)
 # split addresses from MS SQL DB from config
-uv run python main.py -db "sql"
+# uv run python main.py -db "sql"
 #+end_src
