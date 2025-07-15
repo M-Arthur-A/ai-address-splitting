@@ -44,7 +44,7 @@ class Ai_agent:
         )
         entities = address_ner_pipeline(address)
         elapsed = time.perf_counter() - start
-        logger.info(f"Getting result for <{address}> in {elapsed:.6f} sec.")
+        logger.info(f"| AI | Parsing <{address}> is DONE in {elapsed:.6f} sec.")
         return self.__beautify(entities)
 
 
