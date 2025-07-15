@@ -84,4 +84,4 @@ if __name__ == "__main__":
         main(address=config.APP_ARGS.address,
              config=config)
     elif config.DB_PATH:
-        main(config=config)
+        main(address=None, config=config)
