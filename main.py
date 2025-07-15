@@ -3,6 +3,7 @@ import torch
 from loguru import logger
 
 from config import Config
+from csv_connector import Csv_processing
 
 
 
@@ -37,7 +38,17 @@ def ai_run(address):
         aggregation_strategy='simple'
     )
     entities = address_ner_pipeline(address)
-    return entities
+    return beautify(entities)
+
+
+def beautify(entities: list) -> dict:
+    res = {}
+    for item in entities:
+        key = item['entity_group']
+        if key in res.keys():
+            key += '+'
+        res[key] = item['word']
+    return res
 
 
 def main(address: str | None = None,
@@ -48,11 +59,7 @@ def main(address: str | None = None,
     elif config.DB_PATH == 'sql':
         logger.error('SQL connector WIP')
     elif config.DB_PATH:
-        try:
-            with open(config.DB_PATH) as f:
-                ...
-        except FileExistsError:
-            logger.error(f'Cannot open {config.DB_PATH}')
+        Csv_processing(config, logger).process(ai_run)
     else:
         logger.error('no address / filename / SQLconnection provided')
 
