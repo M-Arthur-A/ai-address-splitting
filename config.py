@@ -7,6 +7,7 @@ class Config:
     DB_PATH:     str = ''
     OUT_PATH:    str = ''
     CSV_BUFFER_SIZE: int = 1000000
+    CSV_SEPARATOR: str = ''
     MS_SQL_HOST: str = ''
     MS_SQL_USER: str = ''
     MS_SQL_PASS: str = ''
@@ -48,6 +49,12 @@ class Config:
             '--csv-buffer-size',
             type=int,
             help='buffer size for a csv file'
+        )
+        parser.add_argument(
+            '-s',
+            '--separator',
+            type=str,
+            help='delimiter or separator of csv file'
         )
         self.APP_ARGS = parser.parse_args()
         self.__logger.debug("| CONFIG | app args has been parsed")
@@ -95,5 +102,7 @@ class Config:
                 self.DB_PATH = self.APP_ARGS.database
         if self.APP_ARGS.csv_buffer_size:
             self.CSV_BUFFER_SIZE = int(self.APP_ARGS.csv_buffer_size)
+        if self.APP_ARGS.separator:
+            self.CSV_SEPARATOR = self.APP_ARGS.separator
 
         self.__logger.debug("| CONFIG | config has been created")

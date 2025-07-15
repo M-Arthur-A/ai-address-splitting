@@ -20,6 +20,7 @@ MODEL_PATH  = "path/to/model-dir/"
 DB_PATH     = "path/to/in.csv"
 OUT_PATH    = "path/to/out.csv"
 CSV_BUFFER_SIZE = 1000000
+CSV_SEPARATOR = ';'
 MS_SQL_HOST = ""
 MS_SQL_USER = ""
 MS_SQL_PASS = ""
@@ -33,7 +34,7 @@ uv run python main.py --init
 #+end_src
 * RUN
 #+begin_src txt
-usage: main.py [-h] [-i] [-c CONFIG_PATH] [-a ADDRESS] [-db DATABASE]
+usage: main.py [-h] [-i] [-c CONFIG_PATH] [-a ADDRESS] [-db DATABASE] [-b CSV_BUFFER_SIZE] [-s SEPARATOR]
 
 AI address splitter
 
@@ -46,6 +47,10 @@ options:
                         address to parse
   -db, --database DATABASE
                         csv filepath or "sql"
+  -b, --csv-buffer-size CSV_BUFFER_SIZE
+                        buffer size for a csv file
+  -s, --separator SEPARATOR
+                        delimiter or separator of csv file
 #+end_src
 
 

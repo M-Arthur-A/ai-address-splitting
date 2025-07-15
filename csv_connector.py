@@ -13,6 +13,7 @@ class Csv_processing:
         self.__logger = logger
         self.__in_path = config.DB_PATH
         self.__out_path = config.OUT_PATH
+        self.__csv_separator = config.CSV_SEPARATOR
         self.__buffer_size = int(config.CSV_BUFFER_SIZE)
         self.__logger.debug("| CSV | Csv_processing initialized")
 
@@ -23,7 +24,7 @@ class Csv_processing:
 
         try:
             with open(self.__in_path, 'r', encoding='utf-8') as infile:
-                reader = csv.reader(infile)
+                reader = csv.reader(infile, delimiter=self.__csv_separator)
 
                 for row in reader:
                     if not row:
