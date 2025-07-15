@@ -16,7 +16,7 @@ class Csv_processing:
         self.__buffer_size = int(config.CSV_BUFFER_SIZE)
         self.__logger.debug("| CSV | Csv_processing initialized")
 
-    def process(self, func):
+    def process(self, ai_agent):
         temp_files = []
         cols = ['source']  # 1st col
         buffer = []
@@ -30,7 +30,7 @@ class Csv_processing:
                         continue
 
                     source = row[0]
-                    parsed = func(source)
+                    parsed = ai_agent.run(source)
                     row_data = {'source': source}
                     row_data.update(parsed)
                     buffer.append(row_data)

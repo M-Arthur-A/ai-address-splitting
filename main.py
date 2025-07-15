@@ -1,65 +1,73 @@
 from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer
 import torch
 from loguru import logger
+import time
 
 from config import Config
 from csv_connector import Csv_processing
 
 
 
-def init(local_model_path):
-    model = AutoModelForTokenClassification.from_pretrained("aidarmusin/address-ner-ru")
-    tokenizer = AutoTokenizer.from_pretrained("aidarmusin/address-ner-ru")
-    model.save_pretrained(local_model_path)
-    tokenizer.save_pretrained(local_model_path)
-    logger.info(f"Model has been dowloaded here: {local_model_path}")
+class Ai_agent:
+    def __init__(self):
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        logger.debug(f"using device: {self.device}")
+
+        self.model = AutoModelForTokenClassification.from_pretrained(
+            config.MODEL_PATH,
+            local_files_only=True
+        )
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            config.MODEL_PATH,
+            local_files_only=True
+        )
+        logger.debug("| AI | model and tokenizer loaded")
 
 
-def ai_run(address):
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    logger.debug(f"using device: {device}")
-
-    model = AutoModelForTokenClassification.from_pretrained(
-        config.MODEL_PATH,
-        local_files_only=True
-    )
-    tokenizer = AutoTokenizer.from_pretrained(
-        config.MODEL_PATH,
-        local_files_only=True
-    )
-    logger.debug("model and tokenizer loaded")
-
-    # address_ner_pipeline = pipeline("ner", model="aidarmusin/address-ner-ru", device=device)
-    address_ner_pipeline = pipeline(
-        "ner",
-        model=model,
-        tokenizer=tokenizer,
-        device=device,
-        aggregation_strategy='simple'
-    )
-    entities = address_ner_pipeline(address)
-    return beautify(entities)
+    @classmethod
+    def model_download(cls, local_model_path):
+        model = AutoModelForTokenClassification.from_pretrained("aidarmusin/address-ner-ru")
+        tokenizer = AutoTokenizer.from_pretrained("aidarmusin/address-ner-ru")
+        model.save_pretrained(local_model_path)
+        tokenizer.save_pretrained(local_model_path)
+        logger.info(f"Model has been dowloaded here: {local_model_path}")
 
 
-def beautify(entities: list) -> dict:
-    res = {}
-    for item in entities:
-        key = item['entity_group']
-        if key in res.keys():
-            key += '+'
-        res[key] = item['word']
-    return res
+    def run(self, address):
+        start = time.perf_counter()
+        address_ner_pipeline = pipeline(
+            "ner",
+            model=self.model,
+            tokenizer=self.tokenizer,
+            device=self.device,
+            aggregation_strategy='simple'
+        )
+        entities = address_ner_pipeline(address)
+        elapsed = time.perf_counter() - start
+        logger.info(f"Getting result for <{address}> in {elapsed:.6f} sec.")
+        return self.__beautify(entities)
 
 
-def main(address: str | None = None,
-         config: Config = Config(logger)
+    def __beautify(self, entities: list) -> dict:
+        res = {}
+        for item in entities:
+            key = item['entity_group']
+            if key in res.keys():
+                key += '+'
+            res[key] = item['word']
+        return res
+
+
+def main(address: str | None,
+         config: Config
     ):
+    ai = Ai_agent()
     if address:
-        logger.info(ai_run(address))
+        logger.info(ai.run(address))
     elif config.DB_PATH == 'sql':
         logger.error('SQL connector WIP')
     elif config.DB_PATH:
-        Csv_processing(config, logger).process(ai_run)
+        Csv_processing(config, logger).process(ai)
     else:
         logger.error('no address / filename / SQLconnection provided')
 
@@ -69,7 +77,7 @@ if __name__ == "__main__":
     config = Config(logger)
 
     if config.APP_ARGS.init:
-        init(config.MODEL_PATH)
+        Ai_agent.model_download(config.MODEL_PATH)
 
     if config.APP_ARGS.address:
         # main("628672,,,, Автономный Округ Ханты-Мансийский Автономный Округ - Югра,, Г. Лангепас, Ул. Солнечная, Д.21")
