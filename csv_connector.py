@@ -1,3 +1,4 @@
+import time
 import csv
 import os
 from tempfile import NamedTemporaryFile
@@ -18,6 +19,8 @@ class Csv_processing:
         self.__logger.debug("| CSV | Csv_processing initialized")
 
     def process(self, ai_agent):
+        start_time = time.perf_counter()
+        start = time.perf_counter()
         temp_files = []
         cols = ['source']  # 1st col
         buffer = []
@@ -41,19 +44,23 @@ class Csv_processing:
                             cols.append(key)
 
                     if len(buffer) >= self.__buffer_size:  # saving buffer
-                        self.__save_buffer(buffer, temp_files, cols)
+                        self.__save_buffer(buffer, temp_files, cols, time.perf_counter() - start)
                         buffer = []
+                        start = time.perf_counter()
+
         except FileExistsError:
             self.__logger.error(f'| CSV | Cannot open {self.__in_path}')
 
         if buffer:  # saving rest of buffer
-            self.__save_buffer(buffer, temp_files, cols)
+            self.__save_buffer(buffer, temp_files, cols, time.perf_counter() - start)
             buffer = []
 
         self.__union_tmps(temp_files, cols)
 
+        self.__logger.info(f"| CSV | DONE in {time.perf_counter() - start_time:.6f} sec! Result file <{self.__out_path}> is saved.")
 
-    def __save_buffer(self, buffer: list, temp_files: list, cols: list):
+
+    def __save_buffer(self, buffer: list, temp_files: list, cols: list, secs):
         temp_file = NamedTemporaryFile(mode='w',
                                        delete=False,
                                        encoding='utf-8',
@@ -64,7 +71,7 @@ class Csv_processing:
         writer.writerows(buffer)
         temp_file.close()
         temp_files.append(temp_file.name)
-        self.__logger.debug(f"| CSV | {len(buffer)} rows saved to tmp file {temp_file.name}")
+        self.__logger.debug(f"| CSV | {len(buffer)} rows saved to tmp file <{temp_file.name}> in {secs:.6f} sec.")
 
 
     def __union_tmps(self, temp_files: list, cols: list):

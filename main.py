@@ -1,4 +1,4 @@
-from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer
+from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer, logging
 import torch
 from loguru import logger
 import time
@@ -11,7 +11,7 @@ from csv_connector import Csv_processing
 class Ai_agent:
     def __init__(self):
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        logger.debug(f"using device: {self.device}")
+        logger.debug(f"| AI | using device: {self.device}")
 
         self.model = AutoModelForTokenClassification.from_pretrained(
             config.MODEL_PATH,
@@ -74,6 +74,7 @@ def main(address: str | None,
 
 
 if __name__ == "__main__":
+    logging.set_verbosity_error() # disables transformers prints
     config = Config(logger)
 
     if config.APP_ARGS.init:
